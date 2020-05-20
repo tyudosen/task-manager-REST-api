@@ -3,8 +3,7 @@ const path = require('path')
 require('./db/mongoose.js' )
 const userRouter = require('./routers/users')
 const taskRouter = require('./routers/tasks')
-const User = require('./models/user.js')
-const Task = require('./models/task')
+
 
 
 const app = express()
