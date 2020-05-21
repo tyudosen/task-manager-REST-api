@@ -1,6 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
 
+
 const router = new express.Router()
 
 
@@ -10,12 +11,31 @@ router.post('/users', async (req,res)=>{
     const user = new User(req.body)
     try{
         await user.save()
-        res.status(201).send(user)
+        const token = await user.genAuthToken()
+        res.status(201).send({
+            user,
+            token: token,
+        })
+    }catch(err){
+        res.status(400).send(err)
+    }
+})
+//--------------------------------------------------
+
+//-----------------Login user----------------
+router.post('/users/login', async (req, res)=>{
+    try{
+        const user = await User.findByCreds(req.body.email,req.body.password)
+        const token = await user.genAuthToken()
+        res.send({
+            user,
+            token
+        })
     }catch(err){
         res.status(400).send()
     }
 })
-//--------------------------------------------------
+//-----------------------------------
 
 //------------- Read all users in db ------------------
 
@@ -58,7 +78,14 @@ router.patch('/users/:id', async (req,res)=>{
         runValidators: true,
     }
     try{
-        const user = await User.findByIdAndUpdate(req.params.id,req.body,options)
+        //const user = await User.findByIdAndUpdate(req.params.id,req.body,options)
+        const user = await User.findById(req.params.id)
+        console.log(user);
+        
+        update.forEach((update)=> user[update] = req.body[update])
+        console.log(user);
+        await user.save()
+        
         if(!user){return res.status(404).send()}
         res.send(user)
     }catch(err){
