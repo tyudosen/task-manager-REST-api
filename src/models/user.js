@@ -1,6 +1,7 @@
 const validator = require('validator')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const Task = require('./task')
 const jwt = require('jsonwebtoken')
 
 
@@ -42,13 +43,20 @@ const userSchema = new mongoose.Schema(
                 if(value === 'password'){throw new Error('Insecure')}
             }
         },
-        token:[{
+        tokens:[{
             token:{
                 type: String,
                 required: true
             }
         }]
-    })
+    }
+)
+
+userSchema.virtual('tasks',{
+    ref : 'tasks',
+    localField: '_id',
+    foreignField: 'author'
+})
 
 //--- hash plaintext password before saving---------------
 userSchema.pre('save', async function(next){
@@ -60,7 +68,16 @@ userSchema.pre('save', async function(next){
 })
 //-----------------------------------------------------
 
-//------findByCreds ----------------------------------------
+//---Delete user tasks when user is removed --------------------
+userSchema.pre('remove', async function(next){
+    const user = this;
+    await Task.deleteMany({author: user._id});
+    next();
+})
+//------------------------------------------------------------
+
+
+//------findByCreds: find user in database by email and password ----------------------------------------
 userSchema.statics.findByCreds = async (email,password)=>{
     const user = await User.findOne({email})
 
@@ -73,17 +90,25 @@ userSchema.statics.findByCreds = async (email,password)=>{
     return user
     
 }
+//------------genAuthToken: generates jsonwebtokens from user id----------------------------------------------------
 
 userSchema.methods.genAuthToken = async function (){
     const user = this
     const token = jwt.sign({_id: user._id.toString()}, 'thisIsASecret')
-    user.token = user.token.concat({token})
+    user.tokens = user.tokens.concat({token})
     await user.save()
     return token
 }
 
 //--------------------------------------------------
 
+userSchema.methods.toJSON = function (){
+    const user = this;
+    const userObj = user.toObject();
+    delete userObj.password
+    delete userObj.tokens
+    return userObj
+}
 const User = mongoose.model('user', userSchema)
 
 module.exports = User
