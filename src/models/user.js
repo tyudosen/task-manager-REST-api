@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs')
 const Task = require('./task')
 const jwt = require('jsonwebtoken')
 
+const schemaOptions = {
+    timestamps: true
+}
 
 const userSchema = new mongoose.Schema(
     {
@@ -49,7 +52,8 @@ const userSchema = new mongoose.Schema(
                 required: true
             }
         }]
-    }
+    },
+    schemaOptions
 )
 
 userSchema.virtual('tasks',{

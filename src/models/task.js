@@ -1,7 +1,10 @@
 const validator = require('validator')
 const mongooose = require('mongoose')
 
-const Task = mongooose.model('tasks', {
+const schemaOptions = {
+    timestamps: true
+}
+const taskSchema = new mongooose.Schema({
     description:{
         type: String,
         trim: true,
@@ -16,6 +19,7 @@ const Task = mongooose.model('tasks', {
         required: true,
         ref: 'user'
     }
-})
+}, schemaOptions)
 
+const Task = mongooose.model('tasks', taskSchema)
 module.exports = Task
