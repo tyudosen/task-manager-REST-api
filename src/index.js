@@ -9,7 +9,7 @@ const taskRouter = require('./routers/tasks')
 
 
 const app = express()
-const port = process.env.port || 3000
+const port = process.env.PORT
 
 //--Register middleware function ----
 
@@ -18,6 +18,8 @@ const port = process.env.port || 3000
 // app.use((req,res,next)=>{
 //     res.status(503).send('Site under maintainance')
 // })
+
+
 
 app.use(express.json())
 app.use(userRouter)
@@ -29,4 +31,5 @@ app.use(taskRouter)
 app.listen(port,()=>{
     console.log('server running on ' + port);  
 })
+
 
