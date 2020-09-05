@@ -1,6 +1,6 @@
-# Task Manager REST Api
+# Task Manager REST API
 
-This is a RESTful api backend for a task manger application
+This is a RESTful API backend for a task manger application
 
 # Technologies used
 * JavaScript
@@ -10,4 +10,5 @@ This is a RESTful api backend for a task manger application
 * MongoDB
 
 # How to test
-Download [the Postman collection](https://documenter.getpostman.com/view/12614624/TVCgznfH "Task-manager api collection") to test Api endpoints
+Download [the Postman collection](https://documenter.getpostman.com/view/12614624/TVCgznfH "Task-manager api collection") to test API endpoints.
+Run test on Postman desktop app to prevent CORS error
